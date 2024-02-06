@@ -2,8 +2,11 @@ package com.mindhub.homebanking;
 
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
+import com.mindhub.homebanking.models.Transaction;
+import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.repositories.TransactionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,17 +22,27 @@ public class HomebankingApplication {
     }
 
     @Bean
-    public CommandLineRunner data(ClientRepository clientRepository, AccountRepository accountRepository) {
+    public CommandLineRunner data(ClientRepository clientRepository, AccountRepository accountRepository,TransactionRepository transactionRepository) {
 
         return args -> {
+
             Client melba = new Client("Melba", "Morel", "melba@mindhub.com");
             Account cuenta1 = new Account("1", LocalDate.now(), 5000);
             Account cuenta2 = new Account("2",LocalDate.now().plusDays(1),7500);
+            Transaction transaction1 = new Transaction(TransactionType.DEBIT,-2000,LocalDate.now());
+            Transaction transaction2 = new Transaction(TransactionType.CREDIT,1000,LocalDate.now());
+
+
             melba.addAccount(cuenta1);
             melba.addAccount(cuenta2);
+            cuenta1.addTransaction(transaction1);
+            cuenta2.addTransaction(transaction2);
             clientRepository.save(melba);
             accountRepository.save(cuenta1);
             accountRepository.save(cuenta2);
+            transactionRepository.save(transaction1);
+            transactionRepository.save(transaction2);
+
 
             System.out.println(melba);
 

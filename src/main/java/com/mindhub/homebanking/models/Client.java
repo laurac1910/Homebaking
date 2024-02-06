@@ -1,12 +1,14 @@
 package com.mindhub.homebanking.models;
 
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 public class Client {
+
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -15,9 +17,9 @@ public class Client {
     private String lastName;
 
     private String email;
-
 @OneToMany (mappedBy = "owner",fetch = FetchType.EAGER)
     Set<Account> accounts = new HashSet<>();
+
 
     public Set<Account> getAccounts(){
         return accounts;
@@ -27,6 +29,8 @@ public class Client {
         account.setOwner(this);
         accounts.add(account);
     }
+
+
 
    public Client() {}
 
@@ -65,7 +69,6 @@ public class Client {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     @Override
     public String toString() {

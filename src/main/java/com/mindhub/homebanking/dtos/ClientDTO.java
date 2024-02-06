@@ -21,8 +21,6 @@ public class ClientDTO {
         this.firstName = client.getName();
         this.lastName = client.getLastName();
         this.email = client.getEmail();
-
-
         this.accounts = client.getAccounts().stream().map(AccountDTO::new).collect(Collectors.toSet());
     }
 
