@@ -16,8 +16,7 @@ public class TransactionDTO {
     private double amount;
     LocalDate creationDate;
 
-    public TransactionDTO() {
-    }
+
 
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();

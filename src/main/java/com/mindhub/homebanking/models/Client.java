@@ -1,9 +1,9 @@
 package com.mindhub.homebanking.models;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.LogManager;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +20,6 @@ public class Client {
 @OneToMany (mappedBy = "owner",fetch = FetchType.EAGER)
     Set<Account> accounts = new HashSet<>();
 
-
     public Set<Account> getAccounts(){
         return accounts;
     }
@@ -30,9 +29,15 @@ public class Client {
         accounts.add(account);
     }
 
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
+    List<ClientLoan> getLoans;
+
+    public List<ClientLoan> getLoans() {
+        return getLoans;
+    }
 
 
-   public Client() {}
+    public Client() {}
 
     public Client( String name, String lastName, String email) {
         this.name = name;
@@ -79,5 +84,11 @@ public class Client {
                 ", email='" + email + '\'' +
                 ", accounts=" + accounts +
                 '}';
+    }
+
+    public void add(Client client) {
+    }
+
+    public void setOwner(Loan loan) {
     }
 }

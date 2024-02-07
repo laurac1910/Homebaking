@@ -12,8 +12,7 @@ public class AccountDTO {
     private double balance;
     private Set<TransactionDTO> transactions;
 
-    public AccountDTO() {
-    }
+
 
     public AccountDTO(Account account) {
         this.id = account.getId();
