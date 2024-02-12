@@ -24,7 +24,9 @@ public class ClientController {
     @GetMapping("/")
     public ResponseEntity<List<ClientDTO>> getClients() {
         List<Client> clients = clientRepository.findAll();
-        List<ClientDTO> clientDTOs = clients.stream().map(ClientDTO::new).collect(Collectors.toList());
+        List<ClientDTO> clientDTOs = clients.stream()
+                .map(ClientDTO::new)
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(clientDTOs, HttpStatus.OK);
     }

@@ -17,25 +17,14 @@ public class Client {
     private String lastName;
 
     private String email;
-@OneToMany (mappedBy = "owner",fetch = FetchType.EAGER)
+ @OneToMany (mappedBy = "owner",fetch = FetchType.EAGER)
     Set<Account> accounts = new HashSet<>();
-
-    public Set<Account> getAccounts(){
-        return accounts;
-    }
-
-    public  void addAccount(Account account){
-        account.setOwner(this);
-        accounts.add(account);
-    }
 
     @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
     List<ClientLoan> getLoans;
 
-    public List<ClientLoan> getLoans() {
-        return getLoans;
-    }
-
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
+    public Set<Card> cards;
 
     public Client() {}
 
@@ -55,6 +44,13 @@ public class Client {
         return name;
     }
 
+    public Set<Account> getAccounts(){
+        return accounts;
+    }
+
+    public List<ClientLoan> getLoans() {
+        return getLoans;
+    }
     public void setName(String name) {
         this.name = name;
     }
@@ -75,6 +71,20 @@ public class Client {
         this.email = email;
     }
 
+
+    public Set<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(Set<Card> cards) {
+        this.cards = cards;
+    }
+
+    public void add(Client client) {
+    }
+
+    public void setOwner(Loan loan) {
+    }
     @Override
     public String toString() {
         return "Client{" +
@@ -85,10 +95,10 @@ public class Client {
                 ", accounts=" + accounts +
                 '}';
     }
-
-    public void add(Client client) {
+    public  void addAccount(Account account){
+        account.setOwner(this);
+        accounts.add(account);
     }
 
-    public void setOwner(Loan loan) {
-    }
+
 }

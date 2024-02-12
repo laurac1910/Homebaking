@@ -1,0 +1,62 @@
+package com.mindhub.homebanking.dtos;
+
+import com.mindhub.homebanking.models.Card;
+import com.mindhub.homebanking.models.CardColor;
+import com.mindhub.homebanking.models.CardType;
+import com.mindhub.homebanking.models.Client;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+
+public class CardDTO {
+
+        private  Long id;
+
+        private Long cardNumber;
+
+        private CardType cardType;
+        private CardColor cardColor;
+
+        private Integer cvv;
+
+        private LocalDate fromDate;
+       private LocalDate thruDate;
+
+    public CardDTO(Card card) {
+        this.id = card.getId();
+        this.cardNumber = card.getCardNumber();
+        this.cardType = card.getCardType();
+        this.cardColor = card.getCardColor();
+        this.cvv = card.getCvv();
+        this.fromDate = card.getFromDate();
+        this.thruDate = card.getThruDate();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getCardNumber() {
+        return cardNumber;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public CardColor getCardColor() {
+        return cardColor;
+    }
+
+    public Integer getCvv() {
+        return cvv;
+    }
+
+    public LocalDate getFromDate() {
+        return fromDate;
+    }
+
+    public LocalDate getThruDate() {
+        return thruDate;
+    }
+}
