@@ -13,10 +13,7 @@ import jakarta.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,10 +21,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins="*")
 @RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private  ClientRepository clientRepository;
 
     @GetMapping("/")
     public ResponseEntity<List<AccountDTO>> getClients() {
@@ -48,5 +49,18 @@ public class AccountController {
 
         AccountDTO clientDTO = new AccountDTO(client);
         return new ResponseEntity<>(clientDTO,HttpStatus.OK);
+    }
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<AccountDTO>> getClientAccounts(@PathVariable Long clientId) {
+        Client client = clientRepository.findById(clientId).orElse(null);
+
+        if (client == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Set<Account> accounts = client.getAccounts();
+        List<AccountDTO> accountDTOs = accounts.stream().map(AccountDTO::new).collect(Collectors.toList());
+
+        return new ResponseEntity<>(accountDTOs, HttpStatus.OK);
     }
 }

@@ -7,6 +7,7 @@ import com.mindhub.homebanking.models.Client;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CardDTO {
 
@@ -22,6 +23,10 @@ public class CardDTO {
         private LocalDate fromDate;
        private LocalDate thruDate;
 
+       private String clientName;
+
+    private String clientLastName;
+
     public CardDTO(Card card) {
         this.id = card.getId();
         this.cardNumber = card.getCardNumber();
@@ -30,6 +35,8 @@ public class CardDTO {
         this.cvv = card.getCvv();
         this.fromDate = card.getFromDate();
         this.thruDate = card.getThruDate();
+       this.clientName = card.getClient().getName();
+        this.clientLastName = card.getClient().getLastName();
     }
 
     public Long getId() {
@@ -52,11 +59,24 @@ public class CardDTO {
         return cvv;
     }
 
-    public LocalDate getFromDate() {
-        return fromDate;
+    public String getFromDate() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+        return  fromDate.format(formatter);
     }
 
-    public LocalDate getThruDate() {
-        return thruDate;
+    public String getThruDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+        return  thruDate.format(formatter);
+
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public String getClientLastName() {
+        return clientLastName;
     }
 }
+

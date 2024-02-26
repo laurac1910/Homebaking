@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClientRepository extends JpaRepository <Client,  Long> {
 
+    Client findByEmail(String email); // JPA nos permite  traer el metodo sin escribirlo, solo con el nombre del metodo
 }
+

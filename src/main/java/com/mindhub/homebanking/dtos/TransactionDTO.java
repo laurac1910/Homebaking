@@ -1,19 +1,17 @@
 package com.mindhub.homebanking.dtos;
 
-import com.mindhub.homebanking.models.Account;
-import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.models.TransactionType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
 
 public class TransactionDTO {
     private Long id;
     private TransactionType type;
     private double amount;
+    private String amountInUSD;
     LocalDate creationDate;
 
 
@@ -22,6 +20,7 @@ public class TransactionDTO {
         this.id = transaction.getId();
         this.type = transaction.getType();
         this.amount = transaction.getAmount();
+        this.amountInUSD = convertToUSD(amount);
         this.creationDate = transaction.getCreationDate();
     }
 
@@ -34,23 +33,20 @@ public class TransactionDTO {
         return type;
     }
 
-    public void setType(TransactionType type) {
-        this.type = type;
+    public String getAmountInUSD() {
+        return amountInUSD;
+    }
+    public String convertToUSD(double balance) {
+        DecimalFormat df = new DecimalFormat("#,###.00");
+        return "$" + df.format(balance);
     }
 
-    public double getAmount() {
-        return amount;
+    public String getCreationDate() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return  creationDate.format(formatter);
+
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
 }

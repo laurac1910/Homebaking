@@ -2,10 +2,12 @@ package com.mindhub.homebanking;
 
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 
@@ -15,6 +17,8 @@ import java.time.LocalDate;
 @SpringBootApplication
 public class HomebankingApplication {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     public static void main(String[] args) {
         SpringApplication.run(HomebankingApplication.class, args);
     }
@@ -24,9 +28,9 @@ public class HomebankingApplication {
 
         return args -> {
 
-            Client melba = new Client("Melba", "Morel", "melba@mindhub.com");
-            Account cuenta1 = new Account("1", LocalDate.now(), 5000);
-            Account cuenta2 = new Account("2", LocalDate.now().plusDays(1), 7500);
+            Client melba = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("123456"));
+            Account cuenta1 = new Account("VIN001", LocalDate.now(), 5000);
+            Account cuenta2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500);
             Transaction transaction1 = new Transaction(TransactionType.DEBIT, -2000, LocalDate.now());
             Transaction transaction2 = new Transaction(TransactionType.CREDIT, 1000, LocalDate.now());
 
@@ -75,7 +79,7 @@ public class HomebankingApplication {
             cardRepository.save(card2);
 
 
-            Client Laura = new Client("Laura", "Camargo", "laura@gmail.com");
+            Client Laura = new Client("Laura", "Camargo", "laura@gmail.com", passwordEncoder.encode("123456789"));
             Account cuentaLaura = new Account("L1", LocalDate.now(), 10000.00);
             Laura.addAccount(cuentaLaura);
             clientRepository.save(Laura);
