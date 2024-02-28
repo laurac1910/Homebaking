@@ -10,29 +10,29 @@ import java.time.format.DateTimeFormatter;
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
 
-    private Long cardNumber;
+    private String cardNumber;
 
     private String cardHolder;
     private CardType cardType;
-   private CardColor cardColor;
+    private CardColor cardColor;
 
     private Integer cvv;
 
     LocalDate fromDate;
-     LocalDate thruDate;
+    LocalDate thruDate;
 
     @ManyToOne
     @JoinColumn(name = "Holder")
-     private Client client;
+    private Client client;
 
 
     public Card() {
     }
 
 
-    public Card(Long cardNumber, CardType cardType, CardColor cardColor, Integer cvv, LocalDate fromDate, LocalDate thruDate) {
+    public Card(String cardNumber, CardType cardType, CardColor cardColor, Integer cvv, LocalDate fromDate, LocalDate thruDate) {
         this.cardNumber = cardNumber;
         this.cardType = cardType;
         this.cardColor = cardColor;
@@ -42,16 +42,27 @@ public class Card {
 
     }
 
+    public Card(String cardNumber, CardType cardType, CardColor cardColor, int cvv, LocalDate now, LocalDate localDate ,String cardHolder) {
+        this.cardNumber = cardNumber;
+        this.cardType = cardType;
+        this.cardColor = cardColor;
+        this.cvv = cvv;
+        this.fromDate = now;
+        this.thruDate = localDate;
+this.cardHolder = cardHolder;
+    }
+
+
     public Long getId() {
         return id;
     }
 
 
-    public Long getCardNumber() {
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(Long cardNumber) {
+    public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
@@ -100,8 +111,8 @@ public class Card {
         return cardHolder;
     }
 
-    public void setCardHolder( Client client) {
-        this.cardHolder = client.getName()+" "+client.getLastName();
+    public void setCardHolder(Client client) {
+        this.cardHolder = client.getName() + " " + client.getLastName();
     }
 
     public Client getClient() {

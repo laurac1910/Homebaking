@@ -29,8 +29,8 @@ public class HomebankingApplication {
         return args -> {
 
             Client melba = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("123456"));
-            Account cuenta1 = new Account("VIN001", LocalDate.now(), 5000);
-            Account cuenta2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500);
+            Account cuenta1 = new Account("VIN001", LocalDate.now(), 5000, melba);
+            Account cuenta2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500, melba);
             Transaction transaction1 = new Transaction(TransactionType.DEBIT, -2000, LocalDate.now());
             Transaction transaction2 = new Transaction(TransactionType.CREDIT, 1000, LocalDate.now());
 
@@ -66,13 +66,13 @@ public class HomebankingApplication {
             clientLoanRepository.save(personal1);
             clientRepository.save(melba);
 
-            Card nuevacard = new Card(123456789L, CardType.DEBIT, CardColor.GOLD, 123, LocalDate.now(), LocalDate.now().plusYears(5));
+            Card nuevacard = new Card("123456789", CardType.DEBIT, CardColor.GOLD, 123, LocalDate.now(), LocalDate.now().plusYears(5));
             nuevacard.setClient(melba);
             nuevacard.setCardHolder(melba);
             clientRepository.save(melba);
             cardRepository.save(nuevacard);
 
-            Card card2 = new Card(987654321L,CardType.CREDIT,CardColor.TITANIUM,321,LocalDate.now(),LocalDate.now().plusYears(5));
+            Card card2 = new Card("987654321",CardType.CREDIT,CardColor.TITANIUM,321,LocalDate.now(),LocalDate.now().plusYears(5));
             card2.setClient(melba);
             card2.setCardHolder(melba);
             clientRepository.save(melba);
@@ -80,11 +80,12 @@ public class HomebankingApplication {
 
 
             Client Laura = new Client("Laura", "Camargo", "laura@gmail.com", passwordEncoder.encode("123456789"));
-            Account cuentaLaura = new Account("L1", LocalDate.now(), 10000.00);
+            Account cuentaLaura = new Account("L1", LocalDate.now(), 10000.00, Laura);
             Laura.addAccount(cuentaLaura);
             clientRepository.save(Laura);
             accountRepository.save(cuentaLaura);
             clientRepository.save(Laura);
+
 
 
         };

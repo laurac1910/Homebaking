@@ -1,6 +1,7 @@
 package com.mindhub.homebanking.dtos;
 
 import com.mindhub.homebanking.models.Account;
+import com.mindhub.homebanking.models.Client;
 
 import java.text.DecimalFormat;
 import java.util.Set;
@@ -16,8 +17,10 @@ public class AccountDTO {
     private Set<TransactionDTO> transactions;
 
 
+
     public AccountDTO(Account account) {
         this.id = account.getId();
+
         this.number = account.getNumber();
         this.balance = account.getBalance();
         this.balanceInUSD = convertToUSD(balance);

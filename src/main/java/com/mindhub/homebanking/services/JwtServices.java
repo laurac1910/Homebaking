@@ -22,7 +22,7 @@ public class JwtServices {
 
     public <T> T extraClaim(String token, Function<Claims, T> claimsTFunction) { // extraemos un claim en particular
         final Claims claims = extraAllClaims(token);
-        return claimsTFunction.apply(claims);
+        return claimsTFunction.apply(claims);//.
     }
 
     public String extracUsername(String token) { // extraemos el username del token usando el metodo extraClaim
@@ -37,18 +37,18 @@ public class JwtServices {
         return extractExpiration(token).before(new Date()); // si la fecha de expiracion es antes de la fecha actual, el token esta expirado
     }
 
-    public  String generateToken (UserDetails userDetails) { //  es un string que nos devuelve el token,
+    public  String generateToken (UserDetails userDetails) { //  es un string que nos devuelve el token, le pasamos por parametro el cliente que queremos que se encuentre en el token
         Map<String, Object> claims = new HashMap<>(); // creamos un mapa con los datos que queremos que se encuentren en el token
         var role = userDetails.getAuthorities().stream().toList().get(0); // obtengo las autoridades del usuario, les hago un stream y las convierto en una lista, luego obtengo el primer elemento de la lista
         claims.put("role", role); // asignamos el rol a el claim
-        return createToken(claims, userDetails.getUsername()); // creamos el token
+        return createToken(claims, userDetails.getUsername()); // creamos el token con los claims y el username del cliente
 
     }
 
-    private String  createToken (Map<String, Object> claims, String username) { // creamos el token
+    private String  createToken (Map<String, Object> claims, String username) { //  le pasamos por parametro los claims y el username obtenidos en el metodo anterior
         return Jwts
                 .builder() // creamos el token
-                .claims(claims)// le asignamos los claims
+                .claims(claims)// le asignamos
                 .subject(username)// le asignamos el mail del usuario
                 .issuedAt(new Date(System.currentTimeMillis()))// le asignamos la fecha de creacion
                 .expiration(new Date(System.currentTimeMillis() + expiration))// le asignamos la fecha de expiracion

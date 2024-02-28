@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins="*")
+
 @RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
@@ -50,17 +51,43 @@ public class AccountController {
         AccountDTO clientDTO = new AccountDTO(client);
         return new ResponseEntity<>(clientDTO,HttpStatus.OK);
     }
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<AccountDTO>> getClientAccounts(@PathVariable Long clientId) {
-        Client client = clientRepository.findById(clientId).orElse(null);
 
-        if (client == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    @PostMapping("/current")
+    public ResponseEntity<?> createAccount() {
 
-        Set<Account> accounts = client.getAccounts();
-        List<AccountDTO> accountDTOs = accounts.stream().map(AccountDTO::new).collect(Collectors.toList());
+try {
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    Client client = clientRepository.findByEmail(userEmail);
 
-        return new ResponseEntity<>(accountDTOs, HttpStatus.OK);
+
+    if (client == null) {
+        return new ResponseEntity<>("Client Not Found", HttpStatus.FORBIDDEN);
     }
+
+    if (client.getAccounts().size() >= 3) {
+        return new ResponseEntity<>("The client already has the maximum number of accounts", HttpStatus.FORBIDDEN);
+    }
+
+    clientRepository.save(client);
+    String accountNumber = generateAccountNumber();
+    Account account = new Account(accountNumber, LocalDate.now(), 0, client);
+    accountRepository.save(account);
+
+
+    return new ResponseEntity<>(HttpStatus.CREATED);
+}
+
+catch (Exception exception) {
+    exception.printStackTrace();
+    return new ResponseEntity<>("Error creating account", HttpStatus.INTERNAL_SERVER_ERROR);
+}
+    }
+
+
+    private String generateAccountNumber() {
+        String prefix = "VIN-";
+        String numbers = String.valueOf((int) (Math.random() * 9000000) + 1000000);
+        return prefix + numbers;
+    }
+
 }

@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.swing.plaf.PanelUI;
 
@@ -22,10 +24,13 @@ import javax.swing.plaf.PanelUI;
 public class WebConfiguration {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception { // creamos un filtro de seguridad
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception { // creamos un filtro de seguridad y le estamos pasando por parametro un objeto de tipo httpSecurity
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)  //deshabilitamos todos los siguientes metodos
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -34,13 +39,12 @@ public class WebConfiguration {
                 )
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest // autorizamos las peticiones
-                                .requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
-                                .requestMatchers("/h2-console/**").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/auth/login", "/api/auth/register","/h2-console/**").permitAll()
+                                .anyRequest().permitAll()
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // agregamos el filtro antes de la autenticacion
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // agregamos el filtro antes de la autenticacion por usuario y contraseña para que se ejecute antes
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));// deshabilitamos la creacion de sesiones
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));// deshabilitamos la creacion de sesiones porque trabajamos con tokens
 
         return http.build();// construimos el filtro
     }

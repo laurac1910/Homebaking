@@ -30,10 +30,11 @@ public class Account {
     }
     public Account() {}
 
-    public Account(String number, LocalDate creationDate, double balance) {
+    public Account(String number, LocalDate creationDate, double balance,Client owner){
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
+        this.owner = owner;
 
     }
 

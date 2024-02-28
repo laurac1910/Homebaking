@@ -35,19 +35,19 @@ public class JwtRequestFilter  extends OncePerRequestFilter {
             userName = jwtServices.extracUsername(jwt);
         }
 
-        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) { //  evitamos la re- autenticacion, verificamos que el username no sea nulo y que el contexto de seguridad no tenga autenticacion
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName); //cargamos los datos del cliente
             if (jwtServices.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken //autenticamos al usuario, utilizamos  sus autoridades y le pasamos el token de autenticacion
+                        (   userDetails, null, userDetails.getAuthorities()); // le pasamos el cliente, el token de autenticacion y las autoridades (collection)
 
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);// seteamos el contexto de seguridad con el token de autenticacion Esto indica que el usuario ha sido autenticado con éxito
         }
         }
 
         filterChain.doFilter(request, response);
+        //permitie que la solicitud continúe su procesamiento normal si la autenticación es exitosa.
     }
 }
 

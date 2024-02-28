@@ -4,28 +4,22 @@ import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardColor;
 import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
-import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class CardDTO {
 
-        private  Long id;
-
-        private Long cardNumber;
-
-        private CardType cardType;
-        private CardColor cardColor;
-
-        private Integer cvv;
-
-        private LocalDate fromDate;
-       private LocalDate thruDate;
-
-       private String clientName;
-
+    private Long id;
+    private String cardNumber;
+    private CardType cardType;
+    private CardColor cardColor;
+    private Integer cvv;
+    private LocalDate fromDate;
+    private LocalDate thruDate;
+    private String clientName;
     private String clientLastName;
+
 
     public CardDTO(Card card) {
         this.id = card.getId();
@@ -35,15 +29,18 @@ public class CardDTO {
         this.cvv = card.getCvv();
         this.fromDate = card.getFromDate();
         this.thruDate = card.getThruDate();
-       this.clientName = card.getClient().getName();
+        this.clientName = card.getClient().getName();
         this.clientLastName = card.getClient().getLastName();
+
+
     }
+
 
     public Long getId() {
         return id;
     }
 
-    public Long getCardNumber() {
+    public String getCardNumber() {
         return cardNumber;
     }
 
@@ -60,15 +57,11 @@ public class CardDTO {
     }
 
     public String getFromDate() {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-        return  fromDate.format(formatter);
+        return fromDate.format(DateTimeFormatter.ofPattern("MM/yy"));
     }
 
     public String getThruDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-        return  thruDate.format(formatter);
-
+        return thruDate.format(DateTimeFormatter.ofPattern("MM/yy"));
     }
 
     public String getClientName() {
@@ -78,5 +71,14 @@ public class CardDTO {
     public String getClientLastName() {
         return clientLastName;
     }
+
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    public void setCardColor(CardColor cardColor) {
+        this.cardColor = cardColor;
+    }
 }
+
 
