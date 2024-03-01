@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@Transactional
+@Transactional // cualquier operacion base dentro de la clase se ejecutara en una transaccion, si tiene exito se confirma en la base, si falla se revierte y no persiste
 @RequestMapping("/api/transactions")
 public class TransactionController {
 

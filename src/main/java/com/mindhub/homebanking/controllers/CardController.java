@@ -1,10 +1,7 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.CardRequestDTO;
-import com.mindhub.homebanking.models.Card;
-import com.mindhub.homebanking.models.CardType;
-import com.mindhub.homebanking.models.CardColor;
-import com.mindhub.homebanking.models.Client;
+import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,34 +29,34 @@ public class CardController {
     @Autowired
     private Metodos metodos;
 
-    @PostMapping("/current")
+    @PostMapping("/current") //Esta anotación indica que este método maneja las solicitudes HTTP POST enviadas a "/api/cards/current"
     public ResponseEntity<?> createCard(@RequestBody CardRequestDTO cardRequestDTO) {
         try {
-            String cardType = cardRequestDTO.cardType();
-            String cardColor = cardRequestDTO.cardColor();
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             Client client = clientRepository.findByEmail(userEmail);
 
-            if (client == null) {
-                return new ResponseEntity<>("Client Not Found", HttpStatus.FORBIDDEN);
-            }
+            boolean existingCard = cardRepository.existsCardByCardTypeAndCardColorAndClient(
+                    CardType.valueOf(cardRequestDTO.cardType().toUpperCase()),
+                    CardColor.valueOf(cardRequestDTO.cardColor().toUpperCase()),
+                  client
+            );
 
-            long existingCardsCount = client.getCards().stream()
-                    .filter(card -> card.getCardType() == CardType.valueOf(cardType.toUpperCase()) && card.getCardColor() == CardColor.valueOf(cardColor.toUpperCase()))
-                    .count();
-
-            if (existingCardsCount >= 3) {
-                return new ResponseEntity<>("The client already has the maximum number of cards of this type and color", HttpStatus.FORBIDDEN);
+            if (existingCard) {
+                return new ResponseEntity<>("You already have a card of this type or color", HttpStatus.BAD_REQUEST);
             }
 
             String cardNumber = metodos.generateCardNumber();
             int cvv = metodos.generateCVV();
             String cardHolderName = client.getName() + " " + client.getLastName();
-            Card card = new Card(cardNumber, CardType.valueOf(cardType.toUpperCase()), CardColor.valueOf(cardColor.toUpperCase()), cvv, LocalDate.now(), LocalDate.now().plusYears(5), cardHolderName);
+
+
+            Card card = new Card(cardNumber, CardType.valueOf(cardRequestDTO.cardType().toUpperCase()), CardColor.valueOf(cardRequestDTO.cardColor().toUpperCase()), cvv, LocalDate.now(), LocalDate.now().plusYears(5), cardHolderName);;
             card.setClient(client);
             cardRepository.save(card);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
+
+
         } catch (Exception exception) {
             exception.printStackTrace();
             return new ResponseEntity<>("Error creating card", HttpStatus.INTERNAL_SERVER_ERROR);
