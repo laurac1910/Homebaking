@@ -31,8 +31,8 @@ public class HomebankingApplication {
             Client melba = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("123456"));
             Account cuenta1 = new Account("VIN001", LocalDate.now(), 5000, melba);
             Account cuenta2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500, melba);
-            Transaction transaction1 = new Transaction(TransactionType.DEBIT, -2000, LocalDate.now());
-            Transaction transaction2 = new Transaction(TransactionType.CREDIT, 1000, LocalDate.now());
+            Transaction transaction1 = new Transaction(TransactionType.DEBIT, -2000, LocalDate.now(), "Compra de TV");
+            Transaction transaction2 = new Transaction(TransactionType.CREDIT, 1000, LocalDate.now(), "Deposito de sueldo");
 
 
             melba.addAccount(cuenta1);

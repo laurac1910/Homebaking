@@ -12,8 +12,9 @@ public class TransactionDTO {
     private TransactionType type;
     private double amount;
     private String amountInUSD;
+    private String description;
     LocalDate creationDate;
-
+private Long accountId;
 
 
     public TransactionDTO(Transaction transaction) {
@@ -22,12 +23,17 @@ public class TransactionDTO {
         this.amount = transaction.getAmount();
         this.amountInUSD = convertToUSD(amount);
         this.creationDate = transaction.getCreationDate();
+        this.accountId = transaction.getAccount().getId();
+        this.description = transaction.getDescription();
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public TransactionType getType() {
         return type;
@@ -48,5 +54,7 @@ public class TransactionDTO {
 
     }
 
-
+    public Long getAccountId() {
+        return accountId;
+    }
 }

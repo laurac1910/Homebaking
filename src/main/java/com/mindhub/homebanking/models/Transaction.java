@@ -6,23 +6,25 @@ import java.time.LocalDate;
 
 @Entity
 public class Transaction {
-@Id
-@GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private TransactionType type;
     private double amount;
     LocalDate creationDate;
-@ManyToOne
-@JoinColumn(name = "account_id")
+    private String description;
+    @ManyToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
-    public Transaction(TransactionType type, double amount, LocalDate creationDate) {
+    public Transaction(TransactionType type, double amount, LocalDate creationDate, String description) {
         this.type = type;
-       this.amount = amount;
+        this.amount = amount;
         this.creationDate = creationDate;
-
+        this.description = description;
     }
 
     public Long getId() {
@@ -64,6 +66,14 @@ public class Transaction {
 
 
     public void setAccount(Client client) {
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 

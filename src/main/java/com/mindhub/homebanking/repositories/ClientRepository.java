@@ -1,12 +1,15 @@
 package com.mindhub.homebanking.repositories;
 
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ClientRepository extends JpaRepository <Client,  Long> {
+public interface ClientRepository extends JpaRepository<Client, Long> {
 
     Client findByEmail(String email); // JPA nos permite  traer el metodo sin escribirlo, solo con el nombre del metodo
+
+
 }
 

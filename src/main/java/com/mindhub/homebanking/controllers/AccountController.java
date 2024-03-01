@@ -59,11 +59,9 @@ try {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
     Client client = clientRepository.findByEmail(userEmail);
 
-
     if (client == null) {
         return new ResponseEntity<>("Client Not Found", HttpStatus.FORBIDDEN);
     }
-
     if (client.getAccounts().size() >= 3) {
         return new ResponseEntity<>("The client already has the maximum number of accounts", HttpStatus.FORBIDDEN);
     }

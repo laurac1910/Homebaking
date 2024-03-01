@@ -1,5 +1,6 @@
 package com.mindhub.homebanking.controllers;
 
+import com.mindhub.homebanking.dtos.CardRequestDTO;
 import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.CardColor;
@@ -29,8 +30,10 @@ public class CardController {
     private ClientRepository clientRepository;
 
     @PostMapping("/current")
-    public ResponseEntity<?> createCard(@RequestBody CardRequest cardRequest) {
+    public ResponseEntity<?> createCard(@RequestBody CardRequestDTO cardRequestDTO) {
         try {
+            String cardType = cardRequestDTO.cardType();
+            String cardColor = cardRequestDTO.cardColor();
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             Client client = clientRepository.findByEmail(userEmail);
 
@@ -38,9 +41,8 @@ public class CardController {
                 return new ResponseEntity<>("Client Not Found", HttpStatus.FORBIDDEN);
             }
 
-
             long existingCardsCount = client.getCards().stream()
-                    .filter(card -> card.getCardType() == cardRequest.getType() && card.getCardColor() == cardRequest.getColor())
+                    .filter(card -> card.getCardType() == CardType.valueOf(cardType.toUpperCase()) && card.getCardColor() == CardColor.valueOf(cardColor.toUpperCase()))
                     .count();
 
             if (existingCardsCount >= 3) {
@@ -50,12 +52,11 @@ public class CardController {
             String cardNumber = generateCardNumber();
             int cvv = generateCVV();
             String cardHolderName = client.getName() + " " + client.getLastName();
-            Card card = new Card(cardNumber, cardRequest.getType(), cardRequest.getColor(), cvv, LocalDate.now(), LocalDate.now().plusYears(5), cardHolderName);
+            Card card = new Card(cardNumber, CardType.valueOf(cardType.toUpperCase()), CardColor.valueOf(cardColor.toUpperCase()), cvv, LocalDate.now(), LocalDate.now().plusYears(5), cardHolderName);
             card.setClient(client);
             cardRepository.save(card);
 
-
-            return new ResponseEntity<>( HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception exception) {
             exception.printStackTrace();
             return new ResponseEntity<>("Error creating card", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,27 +83,5 @@ public class CardController {
         Random random = new Random();
         return 100 + random.nextInt(900);
     }
+}
 
-
-    static class CardRequest {
-        private CardType type;
-        private CardColor color;
-
-
-
-        public CardType getType() {
-            return type;
-        }
-
-        public void setType(CardType type) {
-            this.type = type;
-        }
-
-        public CardColor getColor() {
-            return color;
-        }
-
-        public void setColor(CardColor color) {
-            this.color = color;
-        }
-    }}

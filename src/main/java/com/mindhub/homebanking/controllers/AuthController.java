@@ -63,11 +63,7 @@ public class AuthController {
         String accountNumber = generateAccountNumber();
         Account account = new Account(accountNumber, LocalDate.now(), 0, client);
 
-
-
-     accountRepository.save(account);
-
-
+        accountRepository.save(account);
 
         return ResponseEntity.ok(client);
     }
