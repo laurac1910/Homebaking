@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.mindhub.homebanking.utils.Metodos;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -28,6 +29,8 @@ public class CardController {
 
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private Metodos metodos;
 
     @PostMapping("/current")
     public ResponseEntity<?> createCard(@RequestBody CardRequestDTO cardRequestDTO) {
@@ -49,8 +52,8 @@ public class CardController {
                 return new ResponseEntity<>("The client already has the maximum number of cards of this type and color", HttpStatus.FORBIDDEN);
             }
 
-            String cardNumber = generateCardNumber();
-            int cvv = generateCVV();
+            String cardNumber = metodos.generateCardNumber();
+            int cvv = metodos.generateCVV();
             String cardHolderName = client.getName() + " " + client.getLastName();
             Card card = new Card(cardNumber, CardType.valueOf(cardType.toUpperCase()), CardColor.valueOf(cardColor.toUpperCase()), cvv, LocalDate.now(), LocalDate.now().plusYears(5), cardHolderName);
             card.setClient(client);
@@ -62,26 +65,7 @@ public class CardController {
             return new ResponseEntity<>("Error creating card", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private String generateCardNumber() {
-        StringBuilder cardNumberBuilder = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                cardNumberBuilder.append(random.nextInt(10));
-            }
-            if (i < 3) {
-                cardNumberBuilder.append("-");
-            }
-        }
-
-        return cardNumberBuilder.toString();
-    }
-
-    private int generateCVV() {
-        Random random = new Random();
-        return 100 + random.nextInt(900);
-    }
 }
+
+
 
