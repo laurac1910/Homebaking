@@ -9,6 +9,7 @@ import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.ClientService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@Transactional // cualquier operacion base dentro de la clase se ejecutara en una transaccion, si tiene exito se confirma en la base, si falla se revierte y no persiste
+@Transactional
+// cualquier operacion base dentro de la clase se ejecutara en una transaccion, si tiene exito se confirma en la base, si falla se revierte y no persiste
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
@@ -31,14 +33,14 @@ public class TransactionController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @PostMapping("/create")
 
     public ResponseEntity<?> newTransaction(@RequestBody TransferDTO transferDTO) {
         try {
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            Client client = clientRepository.findByEmail(userEmail);
+            Client client = clientService.getClientByEmail(userEmail);
             Account originAccount = accountRepository.findByNumber(transferDTO.accountOrigin());
             Account destinationAccount = accountRepository.findByNumber(transferDTO.accountDestination());
 
@@ -65,7 +67,7 @@ public class TransactionController {
             transactionRepository.save(transactionDebit);
             Transaction transactionCredit = new Transaction(TransactionType.CREDIT, transferDTO.amount(), LocalDate.now(), transferDTO.description());
             transactionRepository.save(transactionCredit);
-         transactionCredit.setAccount(destinationAccount);
+            transactionCredit.setAccount(destinationAccount);
             transactionDebit.setAccount(originAccount);
             return ResponseEntity.ok().build();
 

@@ -4,6 +4,7 @@ import com.mindhub.homebanking.dtos.CardRequestDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class CardController {
     private CardRepository cardRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
     @Autowired
     private Metodos metodos;
 
@@ -33,7 +34,7 @@ public class CardController {
     public ResponseEntity<?> createCard(@RequestBody CardRequestDTO cardRequestDTO) {
         try {
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            Client client = clientRepository.findByEmail(userEmail);
+            Client client = clientService.getClientByEmail(userEmail);
 
             boolean existingCard = cardRepository.existsCardByCardTypeAndCardColorAndClient(
                     CardType.valueOf(cardRequestDTO.cardType().toUpperCase()),
@@ -54,7 +55,7 @@ public class CardController {
             card.setClient(client);
             cardRepository.save(card);
 
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
 
 
         } catch (Exception exception) {

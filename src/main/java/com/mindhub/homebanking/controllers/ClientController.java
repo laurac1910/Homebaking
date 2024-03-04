@@ -4,6 +4,8 @@ import com.mindhub.homebanking.dtos.ClientDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.implServices.ClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +22,16 @@ import java.util.stream.Collectors;
 public class ClientController {
 
     @Autowired
-    private ClientRepository clientRepository;
+  private ClientService clientService;
 
     @GetMapping("/")
     public ResponseEntity<List<ClientDTO>> getClients() {
-        List<Client> clients = clientRepository.findAll();
-        List<ClientDTO> clientDTOs = clients.stream()
-                .map(ClientDTO::new)
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(clientDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(clientService.getClients(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity <ClientDTO> getClientById (@PathVariable Long id){
-        Client client = clientRepository.findById(id).orElse(null);
+        Client client = clientService.getClientById(id);
 
         if (client==null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -45,16 +42,11 @@ public class ClientController {
         return new ResponseEntity<>(clientDTO,HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-   String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    return ResponseEntity.ok("Hello " + email);
-    }
 
     @GetMapping("/current")
     public  ResponseEntity <?> getCLient ( ){
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userEmail);
+        Client client = clientService.getClientByEmail(userEmail);
         return ResponseEntity.ok(new ClientDTO(client));
     }
 
