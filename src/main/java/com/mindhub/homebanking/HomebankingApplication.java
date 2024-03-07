@@ -84,8 +84,14 @@ public class HomebankingApplication {
             Laura.addAccount(cuentaLaura);
             clientRepository.save(Laura);
             accountRepository.save(cuentaLaura);
-            clientRepository.save(Laura);
 
+
+            ClientLoan personal2 = new ClientLoan(5000, 12);
+            personal2.setLoan(personal);
+            personal2.setClient(Laura);
+
+            clientLoanRepository.save(personal2);
+            clientRepository.save(Laura);
 
 
         };

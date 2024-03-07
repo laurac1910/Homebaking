@@ -15,7 +15,9 @@ public class Card {
     private String cardNumber;
 
     private String cardHolder;
+    @Enumerated(EnumType.STRING)
     private CardType cardType;
+    @Enumerated(EnumType.STRING)
     private CardColor cardColor;
 
     private Integer cvv;

@@ -4,25 +4,22 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Loan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String name;
     private double maxAmount;
+
     @ElementCollection
-    @Column(name = "payment")
-    private List<Integer> payments = new ArrayList<>();
+    @Column(name = "payments")
+    private List<Integer> payments;
 
-    @OneToMany(mappedBy = "loan",fetch = FetchType.EAGER)
-     List<ClientLoan> getClients;
-
-    public List<ClientLoan> getGetClients() {
-        return getClients;
-    }
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+    private List<ClientLoan> clientLoans;
 
     public Loan() {
     }
@@ -33,10 +30,9 @@ public class Loan {
         this.payments = payments;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
@@ -62,10 +58,22 @@ public class Loan {
         this.payments = payments;
     }
 
-    public void setOwner(Client client) {
+    public void setClient(Client client) {
+    }
+
+    public List<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void setClientLoans(List<ClientLoan> clientLoans) {
+        this.clientLoans = clientLoans;
     }
 
     public void add(Loan loan) {
     }
+
+
+
+
 
 }

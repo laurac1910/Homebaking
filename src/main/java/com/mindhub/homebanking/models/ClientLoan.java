@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 
 @Entity
 public class ClientLoan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private double amount;
+    private long id;
 
-    private String name;
-    private double payments;
+    private double Amount;
+    private double Payments;
+    private String loanName;
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
@@ -18,42 +20,34 @@ public class ClientLoan {
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
+
     public ClientLoan() {
     }
 
-
     public ClientLoan(double amount, double payments) {
-        this.amount = amount;
-        this.payments = payments;
-
+        Amount = amount;
+        Payments = payments;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
+
     public double getAmount() {
-        return amount;
+        return Amount;
     }
 
     public void setAmount(double amount) {
-        this.amount = amount;
+        Amount = amount;
     }
 
     public double getPayments() {
-        return payments;
+        return Payments;
     }
 
     public void setPayments(double payments) {
-        this.payments = payments;
+        Payments = payments;
     }
 
     public Client getClient() {
@@ -70,5 +64,16 @@ public class ClientLoan {
 
     public void setLoan(Loan loan) {
         this.loan = loan;
+        if (loan != null) {
+            this.loanName = loan.getName();
+        }
+    }
+
+    public String getLoanName() {
+        return loanName;
+    }
+
+    public void setLoanName(String loanName) {
+        this.loanName = loanName;
     }
 }
