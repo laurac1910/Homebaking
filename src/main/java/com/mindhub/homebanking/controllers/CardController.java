@@ -3,7 +3,6 @@ package com.mindhub.homebanking.controllers;
 import com.mindhub.homebanking.dtos.CardRequestDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.CardRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,10 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mindhub.homebanking.utils.Metodos;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -28,7 +25,7 @@ public class CardController {
     @Autowired
     private ClientService clientService;
     @Autowired
-    private Metodos metodos;
+    private com.mindhub.homebanking.utils.metodos metodos;
 
     @PostMapping("/current") //Esta anotación indica que este método maneja las solicitudes HTTP POST enviadas a "/api/cards/current"
     public ResponseEntity<?> createCard(@RequestBody CardRequestDTO cardRequestDTO) {

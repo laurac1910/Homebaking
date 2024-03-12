@@ -5,9 +5,7 @@ import com.mindhub.homebanking.dtos.RegisterDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.securityServices.JwtServices;
-import com.mindhub.homebanking.services.AccountService;
 import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +33,10 @@ public class AuthController {
     @Autowired
     private ClientService clientService;
     @Autowired
-    private AccountService accountService;
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private com.mindhub.homebanking.utils.metodos metodos;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
@@ -62,19 +63,15 @@ public class AuthController {
 
         Client client = new Client(registerDTO.name, registerDTO.lastName, registerDTO.email, passwordEncoder.encode(registerDTO.password));
         clientService.saveClient(client);
-        String accountNumber = generateAccountNumber();
+        String accountNumber = metodos.generateAccountNumber();
         Account account = new Account(accountNumber, LocalDate.now(), 0, client);
 
-        accountService.saveAccount(account);
+        accountRepository.save(account);
 
         return new ResponseEntity<>("Account created success",HttpStatus.CREATED);
     }
 
-    private String generateAccountNumber() {
-        String prefix = "VIN-";
-        String numbers = String.valueOf((int) (Math.random() * 9000000) + 1000000);
-        return prefix + numbers;
-    }
+
 
 }
 

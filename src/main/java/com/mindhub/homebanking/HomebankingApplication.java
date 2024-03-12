@@ -17,8 +17,8 @@ import java.time.LocalDate;
 @SpringBootApplication
 public class HomebankingApplication {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
     public static void main(String[] args) {
         SpringApplication.run(HomebankingApplication.class, args);
     }
@@ -28,7 +28,7 @@ public class HomebankingApplication {
 
         return args -> {
 
-            Client melba = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("123456"));
+            Client melba = new Client("Melba", "Morel", "melba@mindhub.com", "123456");
             Account cuenta1 = new Account("VIN001", LocalDate.now(), 5000, melba);
             Account cuenta2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500, melba);
             Transaction transaction1 = new Transaction(TransactionType.DEBIT, -2000, LocalDate.now(), "Compra de TV");
@@ -79,7 +79,7 @@ public class HomebankingApplication {
             cardRepository.save(card2);
 
 
-            Client Laura = new Client("Laura", "Camargo", "laura@gmail.com", passwordEncoder.encode("123456789"));
+            Client Laura = new Client("Laura", "Camargo", "laura@gmail.com", "123456789");
             Account cuentaLaura = new Account("L1", LocalDate.now(), 10000.00, Laura);
             Laura.addAccount(cuentaLaura);
             clientRepository.save(Laura);

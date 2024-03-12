@@ -1,14 +1,13 @@
 package com.mindhub.homebanking.utils;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
-@Component
-public class Metodos {
-    public String generateCardNumber() {
+@Service
+public class metodos {
+    public  static String generateCardNumber() {
         StringBuilder cardNumberBuilder = new StringBuilder();
         Random random = new Random();
-
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 cardNumberBuilder.append(random.nextInt(10));
@@ -21,8 +20,15 @@ public class Metodos {
         return cardNumberBuilder.toString();
     }
 
-    public int generateCVV() {
+    public static int generateCVV() {
         Random random = new Random();
         return 100 + random.nextInt(900);
     }
+
+    public static String generateAccountNumber() {
+        String prefix = "VIN-";
+        int randomNumber = (int) (Math.random() * 90000000) + 10000000;
+        return prefix + randomNumber;
+    }
+
 }

@@ -1,46 +1,43 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.AccountDTO;
-import com.mindhub.homebanking.dtos.ClientDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.services.AccountService;
 import com.mindhub.homebanking.services.ClientService;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+
 
 @RestController
 
 @RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
-    private AccountService accountService;
+    private AccountRepository accountRepository;
 
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private com.mindhub.homebanking.utils.metodos metodos;
 
     @GetMapping("/")
-    public ResponseEntity<List<AccountDTO>> getClients() {
-        return new ResponseEntity<>(accountService.getClients(), HttpStatus.OK);
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
+        List<Account> accounts = accountRepository.findAll();
+        return new ResponseEntity<>(accounts.stream()
+                .map(AccountDTO::new)
+                .collect(java.util.stream.Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountDTO> getClientById(@PathVariable Long id) {
-        Account client = accountService.getClientById(id);
+        Account client = accountRepository.getClientById(id);
 
         if (client == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -66,9 +63,9 @@ public class AccountController {
             }
 
             clientService.saveClient(client);
-            String accountNumber = generateAccountNumber();
+            String accountNumber = metodos.generateAccountNumber();
             Account account = new Account(accountNumber, LocalDate.now(), 0, client);
-            accountService.saveAccount(account);
+           accountRepository.save(account);
 
 
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -79,10 +76,6 @@ public class AccountController {
     }
 
 
-    private String generateAccountNumber() {
-        String prefix = "VIN-";
-        String numbers = String.valueOf((int) (Math.random() * 9000000) + 1000000);
-        return prefix + numbers;
-    }
+
 
 }
