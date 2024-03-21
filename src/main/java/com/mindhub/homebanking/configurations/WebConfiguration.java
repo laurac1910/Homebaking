@@ -39,8 +39,8 @@ public class WebConfiguration {
                 )
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest // autorizamos las peticiones
-                                .requestMatchers("/api/auth/login", "/api/auth/register","/h2-console/**").permitAll()
-                                .anyRequest().permitAll()
+                                .requestMatchers("/api/auth/login", "/api/auth/register","/api/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // agregamos el filtro antes de la autenticacion por usuario y contraseña para que se ejecute antes
                 .sessionManagement(sessionManagement -> sessionManagement

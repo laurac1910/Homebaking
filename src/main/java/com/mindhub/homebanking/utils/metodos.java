@@ -31,4 +31,7 @@ public class metodos {
         return prefix + randomNumber;
     }
 
+    public boolean validateEmail(String email) {
+        return email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    }
 }

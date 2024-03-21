@@ -1,6 +1,7 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
+import com.mindhub.homebanking.dtos.ClientLoanDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.dtos.LoanRequestDTO;
 import com.mindhub.homebanking.models.*;
@@ -53,6 +54,7 @@ public class LoanController {
             Account destinationAccount = accountRepository.findByNumber(loanRequestDTO.destinationAccount());
             double totalAmount = loanRequestDTO.amount() * 1.20;
 
+
             if (loanRequestDTO.amount() <= 0) {
                 throw new IllegalArgumentException("Amount must be greater than 0");
             }
@@ -75,27 +77,27 @@ public class LoanController {
                 return new ResponseEntity<>("The account does not belong to the client", HttpStatus.FORBIDDEN);
             }
 
-            Loan newLoan = new Loan(loanRequestDTO.name(), totalAmount, List.of(loanRequestDTO.payments()));
-            loanRepository.save(newLoan);
 
-            ClientLoan clientLoan = new ClientLoan(loanRequestDTO.amount(), loanRequestDTO.payments());
+
+            ClientLoan clientLoan = new ClientLoan(totalAmount, loanRequestDTO.payments());
             clientLoan.setClient(client);
-            clientLoan.setLoan(newLoan);
+            clientLoan.setLoan(loanName);
+
             clientLoanRepository.save(clientLoan);
 
-            Transaction transaction1 = new Transaction(TransactionType.CREDIT, totalAmount, LocalDate.now(), "Loan " + loanRequestDTO.name() + " approved");
+            Transaction transaction1 = new Transaction(TransactionType.CREDIT, loanRequestDTO.amount(), LocalDate.now(), "Loan " + loanRequestDTO.name() + " approved"); // Usamos el monto original del préstamo
             transactionRepository.save(transaction1);
             destinationAccount.addTransaction(transaction1);
-            destinationAccount.setBalance(destinationAccount.getBalance() + totalAmount);
+            destinationAccount.setBalance(destinationAccount.getBalance() + loanRequestDTO.amount());
 
-            accountRepository.save(destinationAccount);
+            accountRepository.save(destinationAccount );
             client.addAccount(destinationAccount);
             clientService.saveClient(client);
 
-
-            return new ResponseEntity<>(new LoanDTO(newLoan), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ClientLoanDTO(clientLoan), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 }

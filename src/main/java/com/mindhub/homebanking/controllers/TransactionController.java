@@ -34,29 +34,45 @@ public class TransactionController {
     private AccountRepository accountRepository;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private ClientRepository clientRepository;
 
     @PostMapping("/create")
 
     public ResponseEntity<?> newTransaction(@RequestBody TransferDTO transferDTO) {
         try {
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            Client client = clientService.getClientByEmail(userEmail);
+            Client clientOrigin = clientRepository.findByEmail(userEmail);
             Account originAccount = accountRepository.findByNumber(transferDTO.accountOrigin());
             Account destinationAccount = accountRepository.findByNumber(transferDTO.accountDestination());
 
-
-            if (!client.getAccounts().stream().anyMatch(account1 -> account1.getNumber().equals(transferDTO.accountOrigin()))) {
+            if (!clientOrigin.getAccounts().stream().anyMatch(a -> a.getNumber().equals(transferDTO.accountOrigin()))) {
                 return ResponseEntity.badRequest().body("The account does not belong to the client");
             }
-            if (transferDTO.accountOrigin() == transferDTO.accountDestination()) {
-                return ResponseEntity.badRequest().body("The account origin and destination must be different");
+
+            if (transferDTO.accountOrigin().equals(transferDTO.accountDestination())) {
+                return ResponseEntity.badRequest().body("The origin and destination accounts must be different");
             }
+
             if (!accountRepository.existsAccountByNumber(transferDTO.accountDestination())) {
-                return ResponseEntity.badRequest().body("The account destination does not exist");
+                return ResponseEntity.badRequest().body("The destination account does not exist");
             }
+
+            if (String.valueOf(transferDTO.amount()).isBlank()) {
+                return ResponseEntity.badRequest().body("The amount must be greater than 0");
+            }
+            if (transferDTO.amount() <= 0) {
+                return ResponseEntity.badRequest().body("The amount must be greater than 0");
+            }
+
+            if (!originAccount.getOwner().equals(clientOrigin)) {
+                return ResponseEntity.badRequest().body("The account does not belong to the client");
+            }
+
             if (originAccount.getBalance() < transferDTO.amount()) {
                 return ResponseEntity.badRequest().body("The account does not have enough balance");
             }
+
             originAccount.setBalance(originAccount.getBalance() - transferDTO.amount());
             destinationAccount.setBalance(destinationAccount.getBalance() + transferDTO.amount());
 
@@ -65,6 +81,8 @@ public class TransactionController {
 
             Transaction transactionDebit = new Transaction(TransactionType.DEBIT, transferDTO.amount(), LocalDate.now(), transferDTO.description());
             transactionRepository.save(transactionDebit);
+
+
             Transaction transactionCredit = new Transaction(TransactionType.CREDIT, transferDTO.amount(), LocalDate.now(), transferDTO.description());
             transactionRepository.save(transactionCredit);
             transactionCredit.setAccount(destinationAccount);
@@ -73,7 +91,7 @@ public class TransactionController {
 
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().body("An unexpected error occurred");
         }
 
 

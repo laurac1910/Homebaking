@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -60,7 +58,28 @@ public class CardController {
             return new ResponseEntity<>("Error creating card", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @DeleteMapping("/{cardId}") // Anotación para manejar solicitudes DELETE a la ruta /api/cards/{cardId}
+    public ResponseEntity<?> deleteCard(@PathVariable Long cardId) {
+        try {
+            // Busca la tarjeta por su ID
+            Optional<Card> optionalCard = cardRepository.findById(cardId);
+
+            // Verifica si la tarjeta existe
+            if (optionalCard.isPresent()) {
+                // Si la tarjeta existe, elimínala
+                cardRepository.delete(optionalCard.get());
+                return new ResponseEntity<>("Card deleted successfully", HttpStatus.OK);
+            } else {
+                // Si la tarjeta no existe, devuelve un mensaje de error
+                return new ResponseEntity<>("Card not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return new ResponseEntity<>("Error deleting card", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+
 
 
 

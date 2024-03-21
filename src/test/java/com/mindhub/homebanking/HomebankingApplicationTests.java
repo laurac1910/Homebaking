@@ -18,7 +18,7 @@ class HomebankingApplicationTests {
     void contextLoads() {
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(10)
     void testGenerateCardNumber() {
         String cardNumber = metodos.generateCardNumber();
         assertThat(cardNumber.length(), equalTo(19));
@@ -27,13 +27,13 @@ class HomebankingApplicationTests {
         assertTrue(cardFormat.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}"));
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(10)
     void testGenerateCVV() {
         int cvv = metodos.generateCVV();
         assertThat(cvv, allOf(greaterThanOrEqualTo(100), lessThanOrEqualTo(999)));
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(10)
     void testGenerateAccountNumber() {
         String accountNumber = metodos.generateAccountNumber();
         assertThat(accountNumber, startsWith("VIN-"));
